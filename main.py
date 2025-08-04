@@ -12,10 +12,12 @@ from typing import Tuple, List, Set, Optional
 # ======================================================================
 class GoConfig:
     """Centralized configuration for the Go Bot."""
-    BOARD_REGION = (31, 353, 836, 1157)
-    BOARD_TOP_LEFT_SCREEN = (89, 409)
-    BOARD_WIDTH = 691
-    BOARD_HEIGHT = 691
+    # BOARD_REGION = (31, 353, 836, 1157)
+    BOARD_REGION = (30, 272, 631, 878)
+    BOARD_TOP_LEFT_SCREEN = (73, 316)
+    # BOARD_TOP_LEFT_SCREEN = (89, 409)
+    BOARD_WIDTH = 603
+    BOARD_HEIGHT = 603
     BOARD_SIZE = 19
     MY_PLAYER_ID = 1
     OPPONENT_ID = 2
@@ -245,7 +247,7 @@ class AiEngine:
 
         best_move, best_score = self._alpha_beta_search(game_state, depth, -float('inf'), float('inf'), True, player)
 
-        print(f"🧠 AI Search: {self.nodes_searched} nodes in {time.time() - start_time:.2f}s. Score: {best_score:.2f}")
+        print(f" AI Search: {self.nodes_searched} nodes in {time.time() - start_time:.2f}s. Score: {best_score:.2f}")
         return best_move
 
     def _alpha_beta_search(self, game_state: GoGameState, depth: int, alpha: float, beta: float,
@@ -331,7 +333,7 @@ class AiEngine:
         )
 
         print(
-            f"🧠 AI Search Complete: Searched {self.nodes_searched} nodes in {time.time() - start_time:.2f}s. Best score: {best_score:.2f}")
+            f" AI Search Complete: Searched {self.nodes_searched} nodes in {time.time() - start_time:.2f}s. Best score: {best_score:.2f}")
         return best_move
 
     def _alpha_beta_search(self, game_state: GoGameState, depth: int, alpha: float, beta: float,
@@ -412,7 +414,7 @@ class GoBot:
         self.ai = AiEngine()
         self.consecutive_errors = 0
         self.played_moves = set()
-        print("🚀 Go Bot initialized!")
+        print(" Go Bot initialized!")
         print(f"Configuration: Playing as {'Black' if GoConfig.MY_PLAYER_ID == 1 else 'White'}")
 
     def analyze_board(self) -> GoGameState:
@@ -452,11 +454,11 @@ class GoBot:
         if game_state.current_player != GoConfig.MY_PLAYER_ID:
             return False  # Not our turn, so no move was made.
 
-        print("🎯 Our turn!")
+        print(" Our turn!")
         best_move = self.ai.find_best_move(game_state, GoConfig.MY_PLAYER_ID)
 
         if best_move is None:
-            print("❌ No legal moves found. Passing.")
+            print(" No legal moves found. Passing.")
             return False
 
         row, col = best_move
@@ -468,13 +470,13 @@ class GoBot:
         print(f"⚡ Move: {go_coord} ({row},{col}). Clicking ({click_x},{click_y}).")
         pyautogui.click(x=click_x, y=click_y, duration=0.1)
         self.played_moves.add((row, col))
-        print(f"🧠 {go_coord} added to memory.")
+        print(f" {go_coord} added to memory.")
         self.consecutive_errors = 0
         return True  # A move was successfully made
 
     def start(self):
         """Starts the main continuous game loop with intelligent waiting."""
-        print("=" * 50 + "\n🔄 Starting continuous game loop...\n🛑 Press Ctrl+C to stop.\n" + "=" * 50)
+        print("=" * 50 + "\n Starting continuous game loop...\n Press Ctrl+C to stop.\n" + "=" * 50)
         try:
             while True:
                 # This is the main play loop
@@ -484,7 +486,7 @@ class GoBot:
                 if move_was_made:
                     # If we just moved, we MUST wait for the opponent to respond.
                     # We do this by waiting for the number of opponent stones to change.
-                    print("✅ Move made. Now waiting for opponent's response...")
+                    print(" Move made. Now waiting for opponent's response...")
 
                     # Give the GUI a moment to draw our stone before we check the stone count.
                     time.sleep(1.0)
@@ -499,22 +501,22 @@ class GoBot:
                         new_opponent_count = np.count_nonzero(current_state.board == GoConfig.OPPONENT_ID)
 
                         if new_opponent_count > opponent_stone_count:
-                            print("👍 Opponent move detected. Proceeding to our turn.")
+                            print(" Opponent move detected. Proceeding to our turn.")
                             break  # Success! Exit the inner wait loop.
                         else:
                             print(f"... still waiting for opponent. (Current count: {new_opponent_count})")
                     else:  # This 'else' belongs to the 'while' loop, for timeout
-                        print("⏰ Timed out waiting for opponent. Re-analyzing.")
+                        print(" Timed out waiting for opponent. Re-analyzing.")
                 else:
                     # If it wasn't our turn, just wait normally before checking again.
-                    print("⏳ Waiting for opponent...")
+                    print(" Waiting for opponent...")
                     time.sleep(GoConfig.LOOP_DELAY)
                 # --- END OF THE DEFINITIVE FIX ---
 
         except KeyboardInterrupt:
-            print("\n🛑 Bot stopped by user.")
+            print("\n Bot stopped by user.")
         except Exception as fatal_e:
-            print(f"\n💀 Fatal error forced bot to stop: {fatal_e}")
+            print(f"\n Fatal error forced bot to stop: {fatal_e}")
             import traceback
             traceback.print_exc()
 
@@ -531,11 +533,11 @@ class GoBot:
         if game_state.current_player != GoConfig.MY_PLAYER_ID:
             return False  # It's not our turn, so no move was made
 
-        print("🎯 Our turn!")
+        print(" Our turn!")
         best_move = self.ai.find_best_move(game_state, GoConfig.MY_PLAYER_ID)
 
         if best_move is None:
-            print("❌ No legal moves found. Passing.")
+            print(" No legal moves found. Passing.")
             return False  # No move was made
 
         row, col = best_move
@@ -547,13 +549,13 @@ class GoBot:
         print(f"⚡ Move: {go_coord} ({row},{col}). Clicking ({click_x},{click_y}).")
         pyautogui.click(x=click_x, y=click_y, duration=0.1)
         self.played_moves.add((row, col))
-        print(f"🧠 {go_coord} added to memory.")
+        print(f" {go_coord} added to memory.")
         self.consecutive_errors = 0
         return True  # A move was successfully made
 
     def start(self):
         """Starts the main continuous game loop with intelligent waiting."""
-        print("=" * 50 + "\n🔄 Starting continuous game loop...\n🛑 Press Ctrl+C to stop.\n" + "=" * 50)
+        print("=" * 50 + "\n Starting continuous game loop...\n Press Ctrl+C to stop.\n" + "=" * 50)
         try:
             while True:
                 # This is the main play loop
@@ -563,7 +565,7 @@ class GoBot:
                 if move_was_made:
                     # If we just moved, we MUST wait for the opponent to respond.
                     # We do this by waiting for the number of opponent stones to increase.
-                    print("✅ Move made. Now waiting for opponent's response...")
+                    print(" Move made. Now waiting for opponent's response...")
 
                     # Get the board state right after our move
                     state_after_my_move = self.analyze_board()
@@ -577,22 +579,22 @@ class GoBot:
                         new_opponent_count = np.count_nonzero(current_state.board == GoConfig.OPPONENT_ID)
 
                         if new_opponent_count > opponent_stone_count:
-                            print("👍 Opponent move detected. Proceeding to our turn.")
+                            print(" Opponent move detected. Proceeding to our turn.")
                             break  # Break the inner wait loop and start our turn analysis
                         else:
                             print("... still waiting for opponent.")
                     else:  # This 'else' belongs to the 'while' loop
-                        print("⏰ Timed out waiting for opponent. Re-analyzing.")
+                        print(" Timed out waiting for opponent. Re-analyzing.")
                 else:
                     # If it wasn't our turn, just wait normally before checking again.
-                    print("⏳ Waiting for opponent...")
+                    print(" Waiting for opponent...")
                     time.sleep(GoConfig.LOOP_DELAY)
                 # --- END OF THE CRITICAL FIX ---
 
         except KeyboardInterrupt:
-            print("\n🛑 Bot stopped by user.")
+            print("\n Bot stopped by user.")
         except Exception as fatal_e:
-            print(f"\n💀 Fatal error forced bot to stop: {fatal_e}")
+            print(f"\n Fatal error forced bot to stop: {fatal_e}")
             import traceback
             traceback.print_exc()
 
@@ -604,14 +606,14 @@ class GoBot:
         print(f"\nBoard: B:{black}, W:{white}. Turn: {'B' if game_state.current_player == 1 else 'W'}")
 
         if game_state.current_player != GoConfig.MY_PLAYER_ID:
-            print("⏳ Waiting for opponent...")
+            print(" Waiting for opponent...")
             return
 
-        print("🎯 Our turn!")
+        print(" Our turn!")
         best_move = self.ai.find_best_move(game_state, GoConfig.MY_PLAYER_ID)
 
         if best_move is None:
-            print("❌ No legal moves found. Passing.")
+            print(" No legal moves found. Passing.")
             return
 
         row, col = best_move
@@ -622,29 +624,28 @@ class GoBot:
 
         print(f"⚡ Move: {go_coord} ({row},{col}). Clicking ({click_x},{click_y}).")
         pyautogui.click(x=click_x, y=click_y, duration=0.1)
-        pyautogui.moveTo(1, 1, duration=0.2)
         self.played_moves.add((row, col))
-        print(f"🧠 {go_coord} added to memory.")
+        print(f" {go_coord} added to memory.")
         self.consecutive_errors = 0
 
     def start(self):
         """Starts the main continuous game loop."""
-        print("=" * 50 + "\n🔄 Starting continuous game loop...\n🛑 Press Ctrl+C to stop.\n" + "=" * 50)
+        print("=" * 50 + "\n Starting continuous game loop...\n Press Ctrl+C to stop.\n" + "=" * 50)
         try:
             while True:
                 try:
                     self.run_single_turn()
                 except Exception as e:  # Catching exceptions per-turn allows recovery
                     self.consecutive_errors += 1
-                    print(f"❌ Error in turn #{self.consecutive_errors}: {e}")
+                    print(f" Error in turn #{self.consecutive_errors}: {e}")
                     if self.consecutive_errors >= GoConfig.MAX_CONSECUTIVE_ERRORS:
-                        print("💀 Too many consecutive errors. Stopping.")
+                        print(" Too many consecutive errors. Stopping.")
                         raise  # Re-raise the exception to stop the bot
                 time.sleep(GoConfig.LOOP_DELAY)
         except KeyboardInterrupt:
-            print("\n🛑 Bot stopped by user.")
+            print("\n Bot stopped by user.")
         except Exception as fatal_e:  # Catches the re-raised exception
-            print(f"\n💀 Fatal error forced bot to stop: {fatal_e}")
+            print(f"\n Fatal error forced bot to stop: {fatal_e}")
             import traceback
             traceback.print_exc()
 
